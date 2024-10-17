@@ -1,0 +1,51 @@
+.icon-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: #333333;
+  background: #dddddd;
+  border: none;
+  outline: none;
+  border-radius: 50%;
+}
+
+.icon-button:hover {
+  cursor: pointer;
+}
+
+.icon-button:active {
+  background: #cccccc;
+}
+
+.icon-button__badge {
+  position: absolute;
+  padding: 5px;
+  top: -5px;
+  right: 2px;
+  width: 15px;
+  height: 15px;
+  background: red;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-size: small;
+}
+.doubtify-logo{
+ background-image: linear-gradient(
+  rgba(98, 200, 137, 0.8),
+  rgba(10, 215, 255, 0.8)
+);
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+text-decoration: none;
+font-weight: 700;
+font-size: xx-large;
+background-clip: text;
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+}

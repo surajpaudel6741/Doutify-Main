@@ -1,0 +1,166 @@
+/* Modal overlay background to cover the entire viewport and darken it */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6); /* Darken background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* High z-index to ensure it's above everything */
+    overflow: hidden; /* Prevent scrolling when the modal is open */
+    animation: fadeIn 0.3s ease-in-out; /* Smooth fade-in animation */
+}
+
+/* Modal content box */
+.modalContent {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    animation: scaleIn 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1001;
+    text-align: center;
+}
+
+/* Close icon */
+.closeIcon {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+    transition: color 0.2s;
+}
+
+.closeIcon:hover {
+    color: #ff0000;
+}
+
+/* Input group styling for the min/max amount */
+.formGroup {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Text input styling for min/max amount */
+.textInput {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+.textInput:focus {
+    border-color: rgba(0, 183, 241, 0.9);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    outline: none;
+}
+
+/* Duration slider */
+.sliderContainer {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.rangeSlider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    background: #ddd;
+    border-radius: 5px;
+    outline: none;
+    opacity: 0.9;
+    transition: opacity 0.2s;
+    margin-top: 10px;
+}
+
+.rangeSlider:hover {
+    opacity: 1;
+}
+
+.rangeSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #00b7f1;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.rangeSlider::-webkit-slider-thumb:hover {
+    background: #008fcb;
+}
+
+.rangeSlider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #00b7f1;
+    cursor: pointer;
+}
+
+/* Display for slider values (hours/days) */
+.rangeValues {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    font-size: 16px;
+    color: #666;
+}
+
+/* Submit button */
+.submitBtn {
+    background-color: #00b7f1;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    text-align: center;
+}
+
+.submitBtn:hover {
+    background-color: #008fcb;
+    transform: translateY(-2px);
+    box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.3);
+}
+
+/* Keyframe animation for smooth fade-in */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Keyframe animation for scale-in effect */
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+    }
+    to {
+        transform: scale(1);
+    }
+}
