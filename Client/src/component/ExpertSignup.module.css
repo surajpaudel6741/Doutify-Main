@@ -1,0 +1,124 @@
+/* Container */
+.container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+/* Heading */
+.heading {
+  text-align: center;
+  font-size: 24px;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* Form Styling */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Form Group */
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Label */
+.label {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Input Fields */
+.input, .textarea {
+  padding: 12px;
+  border: 1px solid #d1d1d1;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fafafa;
+  transition: border-color 0.3s;
+}
+.input:focus, .textarea:focus {
+  border-color: #00bfa5;
+}
+.textarea {
+  height: 100px;
+}
+
+/* Expertise Tags */
+.tagContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tag {
+  background-color: #00bfa5;
+  color: #ffffff;
+  padding: 5px 10px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 500;
+}
+.removeTagButton {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  margin-left: 6px;
+  cursor: pointer;
+}
+
+/* Drag-and-Drop Area */
+.dragDropArea {
+  padding: 20px;
+  border: 2px dashed #d1d1d1;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  color: #777;
+  transition: background-color 0.3s;
+}
+.dragDropArea:hover {
+  background-color: #f0f8ff;
+}
+.filePreview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+.fileIcon {
+  font-size: 1.5rem;
+  color: #00bfa5;
+}
+
+/* Submit Button */
+.submitButton {
+  padding: 12px;
+  background-color: #00bfa5;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.submitButton:hover {
+  background-color: #009f8a;
+}
