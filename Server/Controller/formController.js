@@ -268,7 +268,7 @@ const finalTimenPrice = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc User selects the expert from the contained list -------------------------------- Expert selection by User ----------------------------
+// @desc User selects the expert from the bidded list -------------------------------- Expert selection by User ----------------------------
 // @route post : http://localhost:8080/expert/notification/selected
 // @access private
 const selectExpert = asyncHandler(async (req, res) => {
