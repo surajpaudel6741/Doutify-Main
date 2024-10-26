@@ -42,7 +42,7 @@ const home = asyncHandler(async (req, res) => {
 
 const expsignup = asyncHandler(async (req, res) => {
   // console.log("[E] Error Check :")
-  const { title, description, jobtitle, expertese, links } = req.body;
+  const { title, description, jobtitle, expertise, links } = req.body;
   const resume = req.file ? req.file.filename : null;
   const proof = req.files["proof"]
     ? req.files["proof"].map((file) => file.filename)
@@ -51,23 +51,31 @@ const expsignup = asyncHandler(async (req, res) => {
     ? req.files["library"].map((file) => file.filename)
     : [];
 
-  if (!title || !description || !expertese || !proof) {
+  if (!title || !description || !expertise || !proof) {
     res.status(400);
     throw new Error("Please fill the every essentials in the form");
   } else {
     const decodedInfo = req.user.decoded;
     username = decodedInfo.user.username;
+
     try {
+      const formattedLinks = Array.isArray(links)
+        ? links.map((link) => ({
+            urlname: link.urlname,
+            url: link.url,
+          }))
+        : [];
+
       const store = await expertschema.create({
         username,
         title,
         description,
         jobtitle,
-        expertese: Array.isArray(expertese) ? expertese : [expertese],
+        expertise: Array.isArray(expertise) ? expertise : [expertise],
         resume,
         proof,
         library,
-        links: Array.isArray(links) ? links : [links],
+        links: formattedLinks,
       });
       if (store) {
         console.log("[T] Expert data submitted ::");
@@ -80,7 +88,7 @@ const expsignup = asyncHandler(async (req, res) => {
 
         // for displaying first notifications to the expert :::
         const newNotifications = await doubtSchema.find({
-          field: { $in: expertese },
+          field: { $in: expertise },
         });
         let Notification = [];
         for (let i of newNotifications) {
@@ -111,39 +119,39 @@ const signup = asyncHandler(async (req, res) => {
   console.log("req.body is :", req.body);
 
   const { fullname, email, username, password } = req.body;
+
   if (!fullname || !email || !username || !password) {
-    res.status(400);
     console.log("The fields are :", fullname, email, username, password);
-    throw new Error("Please fill the every essentials in the form");
+    throw new Error("Please fill every essential field in the form");
   } else {
     const user = await userschema.findOne({ username });
     if (user) {
-      return res.status(400).json({ error: "Username already exists!" });
+      res.status(409).json({ error: "Username exists: ", data: username });
+      return;
     }
-    const user2 = await userschema.findOne({ email });
-    if (user) {
-      return res.status(400).json({ error: "Email already exists!" });
-    }
+
+    // Store the file path if photo is uploaded
+    const profilePhotoPath = req.file ? req.file.path : null;
 
     const store = await userschema.create({
       fullname,
       email,
       username,
       password,
+      profilePhoto: profilePhotoPath, // Save the path to the profile photo
       role: "user",
     });
-    res
-      .status(201)
-      .json({
-        message: "Field submitted in database successfully: ",
-        data: req.body.username,
-      });
+
+    res.status(201).json({
+      message: "Field submitted in database successfully: ",
+      data: req.body.username,
+    });
   }
 });
 
 // @desc login page             --------------------------------login----------------------------
 // @route /login
-// @access public 
+// @access public
 
 const login = asyncHandler(async (req, res) => {
   console.log("logged in ::");
@@ -202,13 +210,11 @@ const login = asyncHandler(async (req, res) => {
           ", your Session is created"
         );
 
-        res
-          .status(200)
-          .json({
-            message: "You are logged in",
-            token: accesstoken,
-            role: person.lastState,
-          });
+        res.status(200).json({
+          message: "You are logged in",
+          token: accesstoken,
+          role: person.lastState,
+        });
         console.log("[T] User Logged in succesfully");
       } else
         res

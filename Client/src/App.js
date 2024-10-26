@@ -16,19 +16,21 @@ import React, { useState, useEffect, useRef } from "react";
 import LoadingBar from "react-top-loading-bar";
 import ExpertProfileModal from "./component/ExpertProfileModal";
 import SwitchExpertContext from "./context/switchExpertContext";
-
+import Cookies from "js-cookie";
 function App() {
+  console.log("App is rendered")
   const location = useLocation();
   const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const ref = useRef(null);
   const [modalOpen, setModalOpen] = useState(false);
   const navbarProp = location.pathname === "/initial" ? "User" : "Expert";
+  const token =  Cookies.get("token");
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsAuthenticated(!!token);
-  }, []);
+  // useEffect(() => {
+  //   console.log("login")
+  //   const token = localStorage.getItem("token");
+  //   setIsAuthenticated(!!token);
+  // }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -61,7 +63,7 @@ function App() {
               <Route
                 path="/initial"
                 element={
-                  isAuthenticated ? (
+                  token ? (
                     <Initial />
                   ) : (
                     <Navigate to="/login" replace />
@@ -72,20 +74,17 @@ function App() {
               <Route
                 path="/expert"
                 element={
-                  isAuthenticated ? (
+                   token ? (
                     <Expert />
                   ) : (
                     <Navigate to="/login" replace />
                   )
                 }
               />
-
-             
-
               <Route
                 path="/"
                 element={
-                  isAuthenticated ? (
+                  token ? (
                     <Navigate to="/initial" replace />
                   ) : (
                     <Navigate to="/login" replace />

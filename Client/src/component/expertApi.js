@@ -38,12 +38,12 @@ let doubts = [
 ];
 
 // Endpoint to get all doubts
-app.get('/api/getDoubts', (req, res) => {
+app.get('/api/getdoubts', (req, res) => {
   res.json(doubts); // Respond with the doubts array as JSON
 });
 
 // Endpoint to submit a bid
-app.post('/api/submitBid', (req, res) => {
+app.post('/api/submitbid', (req, res) => {
   const { doubtId, bidAmount } = req.body;
 
   // Find the doubt by id

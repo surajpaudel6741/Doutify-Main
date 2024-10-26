@@ -14,9 +14,6 @@ const { home, signup,expsignup, login, toggle } = require('../Controller/userCon
 
 router.route("/").get(validateToken, home);
 
-router.route("/signup").post(signup)
-// router.route("/signup").put(signup) 
-// [] maile signup ko database role milai rathe
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -27,6 +24,11 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage: storage });
+
+router.route("/signup").post(upload.single('photo'), signup);
+// router.route("/signup").put(signup) 
+// [] maile signup ko database role milai rathe
+
 
 router.route("/signup/expert").post(validateToken,upload.fields([{ name: 'resume', maxCount: 1 }, { name: 'proof', maxCount: 5 }, { name: 'library', maxCount: 100 }]), expsignup);
 

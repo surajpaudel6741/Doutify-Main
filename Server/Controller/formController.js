@@ -61,7 +61,7 @@ const userdoubt = asyncHandler(async (req, res) => {
 
       const usernameCopy = username;
       const skilledExperts = await expertschema.find({
-        expertese: { $in: field },
+        expertise: { $in: field },
       });
       skilledExpertsUsername = skilledExperts.map((user) => user.username);
       console.log("[T] Experts are ::", skilledExpertsUsername);

@@ -6,6 +6,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
+  console.log("App is rreee")
   const [emailOrUsername, setEmailOrUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -25,7 +26,10 @@ const Login = () => {
         console.log(data);
         Cookies.set('token', data.token, { expires: 7, path: '/' });
         toast.success('Login successful!');
-        setTimeout(() => navigate('/initial'), 1500);
+        // navigate('/');
+        // navigate('/intial')
+        setTimeout(() => {
+          navigate('/initial')}, 1500);
       } else {
         toast.error(`Login failed: ${data.message}`);
       }
