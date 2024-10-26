@@ -44,6 +44,7 @@ export default function Navbar({setModalOpen}) {
         if (data){
           console.log("User is expert")
           navigate("/expert");
+          //
         }else{
           setState(true)
           // navigate("/initial",{state : true})

@@ -3,30 +3,40 @@ import { FaMoneyBillWave } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper-bundle.css";
 import styles from "./Expert.module.css";
-
+import Cookies from "js-cookie";
 const Expert = () => {
-  const [doubts, setDoubts] = useState([]);
+  const [doubts, setDoubts] = useState([]); // Store doubts
   const [bids, setBids] = useState({}); // Stores bids for each doubt
-  const [modalOpen, setModalOpen] = useState(false); // To control modal visibility
+  const [modalOpen, setModalOpen] = useState(false); // Control modal visibility
   const [activeDoubt, setActiveDoubt] = useState(null); // Track which doubt the bid is for
   const [bidAmount, setBidAmount] = useState(""); // Track bid amount
 
   // Fetch doubts data on component mount
   useEffect(() => {
-    fetch("http://localhost:4000/api/getdoubts", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
+    const fetchDoubts = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/user/doubts", {
+          headers: {
+            Authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const data = await response.json();
         if (Array.isArray(data)) {
           setDoubts(data);
         } else {
           console.error("No doubts found:", data);
         }
-      })
-      .catch((error) => console.error("Error fetching doubts:", error));
+      } catch (error) {
+        console.error("Error fetching doubts:", error);
+      }
+    };
+
+    fetchDoubts();
   }, []);
 
   // Open the bidding modal
@@ -42,34 +52,41 @@ const Expert = () => {
   };
 
   // Submit the bid for a specific doubt
-  const submitBid = () => {
+  const submitBid = async () => {
+    if (!bidAmount) {
+      alert("Please enter a bid amount.");
+      return;
+    }
+
     const doubtId = doubts[activeDoubt]?._id;
 
-    fetch("http://localhost:4000/api/submitbid", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({ doubtId, bidAmount }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Bid submitted:", data);
-        alert(`Bid submitted successfully: ${bidAmount} USD`);
+    try {
+      const response = await fetch("http://localhost:8080/user/notifications", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ doubtId, bidAmount }),
+      });
 
-        setBids((prevBids) => ({ ...prevBids, [activeDoubt]: bidAmount }));
-        setDoubts((prevDoubts) => prevDoubts.filter((_, index) => index !== activeDoubt));
-        handleModalClose();
-      })
-      .catch((error) => console.error("Error submitting bid:", error));
+      const data = await response.json();
+      console.log("Bid submitted:", data);
+      alert(`Bid submitted successfully: ${bidAmount} USD`);
+
+      setBids((prevBids) => ({ ...prevBids, [activeDoubt]: bidAmount }));
+      setDoubts((prevDoubts) => prevDoubts.filter((_, index) => index !== activeDoubt));
+      handleModalClose();
+    } catch (error) {
+      console.error("Error submitting bid:", error);
+    }
   };
 
   return (
     <div className={styles.doubtContainer}>
       {doubts.length > 0 ? (
         doubts.map((doubt, index) => (
-          <div key={index} className={styles.doubtBox}>
+          <div key={doubt._id} className={styles.doubtBox}>
             <div className={styles.doubtHeader}>
               <div className={styles.userInfo}>
                 <img src={doubt.userIcon} alt="User Icon" className={styles.userIcon} />
@@ -115,7 +132,7 @@ const Expert = () => {
         <p className={styles.noDoubtsText}>No doubts available for bidding.</p>
       )}
 
-      {/* Modal */}
+      {/* Modal for Bidding */}
       {modalOpen && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>

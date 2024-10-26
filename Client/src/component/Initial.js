@@ -168,14 +168,24 @@ const Initial = () => {
       const data = await response.json();
       if (response.ok) {
         alert("Doubt submitted successfully!");
-
-        navigate("/initial");
+        setShowModal(false)
+        setDoubt("");
+      setDoubtDescription("");
+      setFieldInput("");
+      setFieldTags([]);
+      setMinMoney(0);
+      setMaxMoney(100);
+      setDuration(1);
+      setDoubtPictures([]);
+      if (quillRef.current) {
+        quillRef.current.getEditor().setContents([]);
+      }
       } else {
-        console.error("Error submitting doubt:", data.message);
+        // console.error("Error submitting doubt:", data.message);
         alert("An error occurred while submitting your doubt.");
       }
     } catch (error) {
-      console.error("Error submitting doubt:", error);
+      // console.error("Error submitting doubt:", error);
       alert("An error occurred while submitting your doubt.");
     }
   };
