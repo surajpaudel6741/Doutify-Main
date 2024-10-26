@@ -41,11 +41,14 @@ export default function Navbar({setModalOpen}) {
       }).then((response)=>response.json())
       .catch((error)=>console.log(error))
       .then((data)=>{
+        console.log(data)
         if (data){
-          console.log("User is expert")
+          console.log("data is",data)
+          Cookies.set("token",data.token)
           navigate("/expert");
           //
         }else{
+          console.log("data is",data)
           setState(true)
           // navigate("/initial",{state : true})
         }

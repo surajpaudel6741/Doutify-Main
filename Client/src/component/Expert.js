@@ -15,7 +15,7 @@ const Expert = () => {
   useEffect(() => {
     const fetchDoubts = async () => {
       try {
-        const response = await fetch("http://localhost:8080/user/doubts", {
+        const response = await fetch("http://localhost:8080/user/notifications", {
           headers: {
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
