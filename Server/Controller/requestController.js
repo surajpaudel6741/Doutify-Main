@@ -1,9 +1,12 @@
 // note: If you are seeing this in github, requestcontroller is just being initiated, its just template, not data
 
+const { json } = require("express");
 const { doubtSchema } = require("../models/formModules");
 const { expertschema, userschema } = require("../models/userModule");
 const asyncHandler = require("express-async-handler");
 const session = require("express-session");
+const jwt = require("jsonwebtoken");
+
 
 /* @desc Get the user description -------------------------------- get/put UserProfile ----------------------------*/
 
@@ -235,7 +238,20 @@ const expertexists = asyncHandler(async (req, res) => {
     const user = await expertschema.findOne({ username });
 
     if (user) {
-      return res.status(200).send(true); // Expert exists
+      const decodedInfo = req.user.decoded; // getting whole decoded values
+      if (decodedInfo.user.ifExpert) {
+        decodedInfo.user.ifExpert = false;
+      } else {
+        decodedInfo.user.ifExpert = true;
+      }
+      const newToken = jwt.sign(
+        { user: decodedInfo.user },
+        process.env.SECRET_KEY,
+        { expiresIn: "1w" }
+      );
+      console.log(newToken)
+    
+      return res.status(200).send(JSON.stringify({"token":newToken})); // Expert exists
     } else {
       return res.status(200).send(false); // Expert does not exist //Made 404-200
     }

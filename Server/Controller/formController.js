@@ -60,9 +60,11 @@ const userdoubt = asyncHandler(async (req, res) => {
       user.meetings.push({ role: "learner", doubtId }); // I was fixing this
 
       const usernameCopy = username;
+
       const skilledExperts = await expertschema.find({
         expertise: { $in: field },
       });
+      
       skilledExpertsUsername = skilledExperts.map((user) => user.username);
       console.log("[T] Experts are ::", skilledExpertsUsername);
 
