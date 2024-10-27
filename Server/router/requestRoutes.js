@@ -12,6 +12,7 @@ const {
   getExpertMeetings,
   userexists,
   expertexists,
+  biddedList
 } = require("../Controller/requestController");
 
 requestrouter.route("/userInfo").get(validateToken, getUserInfo);
@@ -29,5 +30,7 @@ requestrouter
 
 requestrouter.route("/userexists").get(userexists); // get Doubt list // doubthistory
 requestrouter.route("/expertexists").get(validateToken, expertexists); // get Doubt list // doubthistory
+
+requestrouter.route("/biddedlist").post(validateToken, biddedList); // get Doubt list // doubthistory
 
 module.exports = requestrouter;
