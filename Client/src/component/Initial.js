@@ -4,11 +4,10 @@ import "react-quill/dist/quill.snow.css";
 import styles from "./Initial.module.css";
 import TimeMoneyDurationModal from "./TimeMoneyDurationModal";
 import { FaCloudUploadAlt, FaTimes } from "react-icons/fa";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import ExpertProfileModal from "./ExpertProfileModal";
-import {  useSwitchExpertContext } from "../context/switchExpertContext";
-
+import { useSwitchExpertContext } from "../context/switchExpertContext";
 
 const Initial = () => {
   const [saveState, setSaveState] = useState(false);
@@ -25,19 +24,9 @@ const Initial = () => {
   const quillRef = useRef();
   const fileInputRef = useRef();
   const navigate = useNavigate();
-  const {state,setState} = useSwitchExpertContext()
+  const { state, setState } = useSwitchExpertContext();
 
-  console.log("Redirected to the initial")
-   
-  
-
-
-  // useEffect(() => {
-
-  //   if (!verify()) {
-  //     navigate("/login", { replace: true });
-  //   }
-  // }, [navigate]);
+  console.log("Redirected to the initial");
 
   const extractDataFromQuill = () => {
     const quillEditor = quillRef.current.getEditor();
@@ -47,7 +36,8 @@ const Initial = () => {
 
     delta.ops.forEach((op) => {
       if (op.insert && typeof op.insert === "string") {
-        textParts.push(op.insert);
+        const sanitizedText = op.insert.replace(/<\/?[^>]+(>|$)/g, ""); // Remove HTML tags if any
+        textParts.push(sanitizedText);
       } else if (op.insert && op.insert.image) {
         images.push(op.insert.image);
       }
@@ -60,17 +50,17 @@ const Initial = () => {
     const value = e.target.value;
     setFieldInput(value);
 
-    if (value.endsWith(',')) {
+    if (value.endsWith(",")) {
       const newTag = value.slice(0, -1).trim();
       if (newTag && !fieldTags.includes(newTag)) {
         setFieldTags([...fieldTags, newTag]);
       }
-      setFieldInput('');
+      setFieldInput("");
     }
   };
 
   const removeTag = (tagToRemove) => {
-    setFieldTags(fieldTags.filter(tag => tag !== tagToRemove));
+    setFieldTags(fieldTags.filter((tag) => tag !== tagToRemove));
   };
 
   const handleDragEnter = (e) => {
@@ -94,32 +84,37 @@ const Initial = () => {
   const handleDrop = (event) => {
     event.preventDefault();
     const droppedFiles = Array.from(event.dataTransfer.files);
-    const validFiles = droppedFiles.filter(file => 
-      file.size <= 2 * 1024 * 1024 && file.type.startsWith("image/") // Check for file size and type
+    const validFiles = droppedFiles.filter(
+      (file) => file.size <= 2 * 1024 * 1024 && file.type.startsWith("image/") // Check for file size and type
     );
 
     if (validFiles.length < droppedFiles.length) {
-      alert("Some files were not added because they exceed the 2 MB limit or are not images.");
+      alert(
+        "Some files were not added because they exceed the 2 MB limit or are not images."
+      );
     }
 
     setDoubtPictures((prevPictures) => [...prevPictures, ...validFiles]);
     setIsDragging(false);
   };
+
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
-    const validFiles = selectedFiles.filter(file => 
-      file.size <= 2 * 1024 * 1024 && file.type.startsWith("image/") // Check for file size and type
+    const validFiles = selectedFiles.filter(
+      (file) => file.size <= 2 * 1024 * 1024 && file.type.startsWith("image/") // Check for file size and type
     );
 
     if (validFiles.length < selectedFiles.length) {
-      alert("Some files were not added because they exceed the 2 MB limit or are not images.");
+      alert(
+        "Some files were not added because they exceed the 2 MB limit or are not images."
+      );
     }
 
     setDoubtPictures((prevPictures) => [...prevPictures, ...validFiles]);
   };
 
   const handleRemoveImage = (index) => {
-    setDoubtPictures((prevPictures) => 
+    setDoubtPictures((prevPictures) =>
       prevPictures.filter((_, i) => i !== index)
     );
   };
@@ -131,18 +126,22 @@ const Initial = () => {
     }
 
     const { textParts, images } = extractDataFromQuill();
+
+    // Creating form data for submission
     const formData = new FormData();
     formData.append("doubt", doubt);
-    formData.append("doubtDescription", doubtDescription);
+    formData.append("doubtDescription", textParts.join(" ")); // Use extracted text from editor content
     formData.append("field", JSON.stringify(fieldTags));
     formData.append("minMoney", minMoney);
     formData.append("maxMoney", maxMoney);
     formData.append("duration", duration);
 
+    // Adding images from the editor
     images.forEach((image, index) =>
       formData.append(`doubtImage${index + 1}`, image)
     );
 
+    // Adding additional pictures uploaded by the user
     doubtPictures.forEach((file) => {
       formData.append("doubtPictures", file);
     });
@@ -163,30 +162,29 @@ const Initial = () => {
         body: formData,
       });
 
-     
       if (response.ok) {
         alert("Doubt submitted successfully!");
-        setShowModal(false)
-        setDoubt("");
-      setDoubtDescription("");
-      setFieldInput("");
-      setFieldTags([]);
-      setMinMoney(0);
-      setMaxMoney(100);
-      setDuration(1);
-      setDoubtPictures([]);
-      if (quillRef.current) {
-        quillRef.current.getEditor().setContents([]);
-      }
+        setShowModal(false);
+        resetForm();
       } else {
-        console.log("Error occured")
-        // console.error("Error submitting doubt:", data.message);
         alert("An error occurred while submitting your doubt.");
       }
     } catch (error) {
-      console.log(error)
-      // console.error("Error submitting doubt:", error);
       alert("An error occurred while submitting your doubt.");
+    }
+  };
+
+  const resetForm = () => {
+    setDoubt("");
+    setDoubtDescription("");
+    setFieldInput("");
+    setFieldTags([]);
+    setMinMoney(0);
+    setMaxMoney(100);
+    setDuration(1);
+    setDoubtPictures([]);
+    if (quillRef.current) {
+      quillRef.current.getEditor().setContents([]);
     }
   };
 
@@ -245,49 +243,59 @@ const Initial = () => {
         </div>
 
         <div className={styles.formGroup}>
-      <label className={styles.label}>Upload Additional Doubt Pictures</label>
-      <div
-        className={`${styles.dragDrop} ${isDragging ? styles.dragging : ""}`}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-        onClick={() => fileInputRef.current.click()}
-      >
-        <input
-          type="file"
-          multiple
-          accept="image/*"
-          onChange={handleFileChange}
-          className={styles.fileInput}
-          ref={fileInputRef}
-          style={{ display: "none" }}
-        />
-        <FaCloudUploadAlt size={50} />
-        <p>Drag & drop files or click to select files</p>
-      </div>
-
-      {/* Thumbnail Preview */}
-      <div className={styles.previewContainer}>
-        {doubtPictures.map((file, index) => (
-          <div key={index} className={styles.thumbnail}>
-            <img
-              src={URL.createObjectURL(file)}
-              alt={`thumbnail-${index}`}
-              className={styles.image}
+          <label className={styles.label}>
+            Upload Additional Doubt Pictures
+          </label>
+          <div
+            className={`${styles.dragDrop} ${
+              isDragging ? styles.dragging : ""
+            }`}
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onClick={() => fileInputRef.current.click()}
+          >
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleFileChange}
+              className={styles.fileInput}
+              ref={fileInputRef}
+              style={{ display: "none" }}
             />
-            <button
-              className={styles.removeButton}
-              onClick={() => handleRemoveImage(index)}
-            >
-              <span><FaTimes /></span>
-            </button>
+            <FaCloudUploadAlt size={50} />
+            <p>Drag & drop files or click to select files</p>
           </div>
-        ))}
-      </div>
-    </div>
 
-        <button type="button" className={styles.submitBtn} onClick={handleIDoubtClick}>
+          {/* Thumbnail Preview */}
+          <div className={styles.previewContainer}>
+            {doubtPictures.map((file, index) => (
+              <div key={index} className={styles.thumbnail}>
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt={`thumbnail-${index}`}
+                  className={styles.image}
+                />
+                <button
+                  className={styles.removeButton}
+                  onClick={() => handleRemoveImage(index)}
+                >
+                  <span>
+                    <FaTimes />
+                  </span>
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          className={styles.submitBtn}
+          onClick={handleIDoubtClick}
+        >
           I Doubt
         </button>
       </form>

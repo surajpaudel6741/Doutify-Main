@@ -11,7 +11,7 @@ const doubt = mongoose.Schema(
       type: String,
       required: [true, "Please enter your doubt"],
     },
-    doubtDiscription: {
+    doubtDescription: {
       type: String,
       required: [true, "Please express your doubt in some form"],
     },
@@ -34,14 +34,7 @@ const doubt = mongoose.Schema(
       },
     },
     time: {
-      // testing left to be done [I was here]
-      date: {
-        type: Date,
-      },
-      ranges: [String],
-      duration: {
-        type: String,
-      },
+      type: Number // time is the expiration time for the doubt
     },
     status: {
       type: String,

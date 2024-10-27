@@ -9,7 +9,7 @@ const session = require("express-session");
 const userdoubt = asyncHandler(async (req, res) => {
   let { doubt, doubtDescription, field, minMoney, maxMoney, duration } =
     req.body;
-
+  console.log("duration :", duration);
   // Handle optional doubt pictures
   let doubtPictures = [];
   if (req.files && req.files["doubtPictures"]) {
@@ -25,52 +25,38 @@ const userdoubt = asyncHandler(async (req, res) => {
   try {
     // Decode user info
     const { username } = req.user.decoded.user;
-    
 
     // Ensure 'field' is an array and standardize the field names
     const fieldArray = Array.isArray(field) ? field : JSON.parse(field);
-    console.log("Field array is ....")
-    console.log(fieldArray)
     const fields = fieldArray.map((f) => f.toLowerCase());
-    console.log("Field array is ....")
-    console.log(fields);
-
-    console.log("Doubt pictures")
-    console.log(doubtPictures)
-
-    console.log("Doub t is ")
-    console.log(doubt)
-    console.log("Doub desc t is ")
-    console.log(doubtDescription)
-    doubtDiscription ="dsdsdsdsdsd"
 
     // Create a new doubt entry
     const store = await doubtSchema.create({
       username,
       doubt,
-      doubtDiscription, // Fixed typo from 'doubtDiscription' to 'doubtDescription'
+      doubtDescription, // Fixed typo from 'doubtDescription' to 'doubtDescription'
       field: fields,
       doubtPictures,
       money: { min: minMoney, max: maxMoney },
-      time: { duration },
+      time: duration,
       status: "Doubt submitted",
     });
 
-
-    console.log("Store is ",store)
+    console.log("Store is ", store);
 
     // Update user's meetings with new doubt reference
     const user = await userschema.findOne({ username });
     user.meetings.push({ role: "learner", doubtId: store._id });
     await user.save();
-    console.log("User is ",user)
+    console.log("User is ", user);
 
     // Find experts with matching expertise fields
     const skilledExperts = await expertschema.find({
       expertise: { $in: fields },
     });
-    console.log("Skilled Experts are ",skilledExperts)
+    console.log("Skilled Experts are ", skilledExperts);
 
+    let money = { min: minMoney, max: maxMoney };
     // Prepare notification message for experts
     const notificationMessage = JSON.stringify({
       message: "There is a doubt for you!",
@@ -79,13 +65,15 @@ const userdoubt = asyncHandler(async (req, res) => {
       doubt,
       doubtDescription,
       doubtPictures,
+      money,
+      postday: new Date().toISOString().split("T")[0], // day you posted the doubt
       duration,
       read: false,
     });
     const notification = {
       message: notificationMessage,
-      read:false
-    }
+      read: false,
+    };
     // Send notifications to matching experts
     await Promise.all(
       skilledExperts.map((expert) =>
@@ -234,13 +222,19 @@ const bellclick = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc Notification by expert to finalize price -----------------------------final time Expert Dicision ----------------------------
+// @desc Notification by expert to finalize price ----------------------------- final time Expert Dicision ----------------------------
 // @route post : http://localhost:8080/user/notification/finalTimenPrice
 // @access public
 const finalTimenPrice = asyncHandler(async (req, res) => {
   // public route  done by the expert to finalize price
   try {
-    const { finalTime, finalPrice, finalDuration, doubtId } = req.body; // username -> The one had a doubt
+    // body: JSON.stringify({ doubtId, bidAmount, selectedDateTime })
+
+    const {
+      finalTime: selectedDateTime,
+      finalPrice: bidAmount,
+      doubtId,
+    } = req.body; // username -> The one had a doubt
     // changed my mind and doing via body, we can inserting using post in js easily ...
     if (!finalTime || !finalPrice) {
       return res.status(400).json({
@@ -262,8 +256,16 @@ const finalTimenPrice = asyncHandler(async (req, res) => {
     const userWithDoubt = await userschema.findOne({ username: username });
     console.log(userWithDoubt);
 
+    let bidnotification = JSON.stringify({
+      expertname,
+      doubtId,
+      finalTime,
+      finalPrice
+    });
+
     userWithDoubt.notifications.push({
-      message: `Expert ${expertname} has agreed to take meeting doubtId:${doubtId} at ${finalTime} for ${finalDuration} with RS${finalPrice}.`,
+      // message: `Expert ${expertname} has agreed to take meeting doubtId:${doubtId} at ${finalTime} for with RS${finalPrice}.`,
+      message: bidnotification,
     });
     await userWithDoubt.save();
 

@@ -200,3 +200,27 @@
 .cancelButton:hover {
   background-color: #c82333;
 }
+
+.sliderContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.slider {
+  width: 100%; /* Full width */
+  height: 10px; /* Height of the slider */
+}
+
+.thumb {
+  background: green; /* Customize the thumb color */
+  border-radius: 50%;
+  height: 20px; /* Customize the thumb size */
+  width: 20px;
+  cursor: pointer;
+}
+
+.track {
+  background: lightgray; /* Customize the track color */
+}
