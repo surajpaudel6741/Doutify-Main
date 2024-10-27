@@ -17,6 +17,7 @@ import LoadingBar from "react-top-loading-bar";
 import ExpertProfileModal from "./component/ExpertProfileModal";
 import SwitchExpertContext from "./context/switchExpertContext";
 import Cookies from "js-cookie";
+import DoubtList from "./component/bided/DoubtList"
 function App() {
   console.log("App is rendered")
   const location = useLocation();
@@ -76,6 +77,16 @@ function App() {
                 element={
                    token ? (
                     <Expert />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />
+              <Route
+                path="/user/doubtlist"
+                element={
+                   token ? (
+                    <DoubtList />
                   ) : (
                     <Navigate to="/login" replace />
                   )
