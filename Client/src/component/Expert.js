@@ -93,7 +93,7 @@ const Expert = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
-          body: JSON.stringify({ doubtId, bidAmount, selectedDateTime }), // Send selected dateTime with bid
+          body: JSON.stringify({ doubtId, finalPrice:12, finalTime:selectedDateTime }), // Send selected dateTime with bid
         }
       );
 
