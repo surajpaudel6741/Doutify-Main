@@ -37,7 +37,7 @@ export default function Profiledropdown(props) {
       </div>
       <div className={`${css.menu} ${menuActive ? css.active : ''}`}>
         <ul>
-          <li><a href="#"><i className="fa-solid fa-user"></i>&nbsp;Profile</a></li>
+          <li><a href="/user/doubtlist"><i className="fa-solid fa-user"></i>&nbsp;Profile</a></li>
           <li><a href="#"><i className="fa-solid fa-message"></i>&nbsp;Inbox</a></li>
           <li><a href="#"><i className="fa-solid fa-gear"></i>&nbsp;Settings</a></li>
           <li><a href="#"><i className="fa-solid fa-circle-info"></i>&nbsp;Help</a></li>
