@@ -231,8 +231,8 @@ const finalTimenPrice = asyncHandler(async (req, res) => {
     // body: JSON.stringify({ doubtId, bidAmount, selectedDateTime })
 
     const {
-      finalTime: selectedDateTime,
-      finalPrice: bidAmount,
+      finalTime,
+      finalPrice,
       doubtId,
     } = req.body; // username -> The one had a doubt
     // changed my mind and doing via body, we can inserting using post in js easily ...
