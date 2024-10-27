@@ -225,6 +225,9 @@ const userexists = asyncHandler(async (req, res) => {
   }
 });
 
+
+
+
 // @desc return if expert exists or not
 // request: get
 // @route /request/expertexists
@@ -261,6 +264,39 @@ const expertexists = asyncHandler(async (req, res) => {
   }
 });
 
+
+
+
+const biddedList = asyncHandler(async (req, res) => {
+  // useSchema.notification.message.bidnotification
+    sendtouser = []
+  const { username  } = req.body;
+  console.log("username is ",username)
+   try{
+    const user = await userschema.findOne({ username });
+    if (user){
+        console.log(user.notifications) 
+        user.notifications.map((data)=>{
+          sendtouser.push(data.message)
+          
+        })
+
+        return res.json({"doubtlists":sendtouser}) 
+    }
+    res.json(false)
+     
+   }
+   catch(err){
+    console.log(err)
+    res.status(500).json(false)
+   }
+   res.status(500).json(false)
+});
+
+
+
+
+
 module.exports = { expertexists };
 
 // Add this to your module exports
@@ -274,4 +310,5 @@ module.exports = {
   getExpertMeetings,
   userexists,
   expertexists,
+  biddedList
 };

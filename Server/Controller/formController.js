@@ -267,6 +267,9 @@ const finalTimenPrice = asyncHandler(async (req, res) => {
       // message: `Expert ${expertname} has agreed to take meeting doubtId:${doubtId} at ${finalTime} for with RS${finalPrice}.`,
       message: bidnotification,
     });
+
+    // useSchema.notification.message.bidnotification
+
     await userWithDoubt.save();
 
     if (!doubt) {
