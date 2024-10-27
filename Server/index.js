@@ -18,12 +18,16 @@ connectDb().catch(error => console.log("Database connection error: ", error));
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads/formuploads')));
+
 
 // Enable CORS for the frontend
 app.use(cors({
   origin: 'http://localhost:3000', // Allow React frontend to communicate with backend
   credentials: true, // Allow cookies
 }));
+
+
 
 // Session management
 app.use(session({
@@ -41,6 +45,8 @@ app.use("/", require('./router/userRoutes'));
 
 // Serve static files from React's build folder
 app.use(express.static(path.join(__dirname, '../client/build')));
+
+
 
 // Catch-all route to serve the React frontend for any unknown route
 app.get('*', (req, res) => {

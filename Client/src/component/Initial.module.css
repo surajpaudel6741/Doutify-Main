@@ -45,7 +45,7 @@
 }
 
 .questionInput:focus, .moneyInput:focus, .timeSelect:focus {
-    border-color: rgba(0, 183, 241, 0.8);
+    border-color: #45a049;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     outline: none;
 }
@@ -83,7 +83,7 @@
 }
 
 .submitBtn {
-    background-color: rgba(0, 183, 241, 0.9);
+    background-color: #45a049;
     color: #ffffff;
     padding: 12px 20px;
     border: none;
@@ -97,7 +97,7 @@
 }
 
 .submitBtn:hover {
-    background-color: rgba(0, 145, 225, 0.9);
+    background-color: #39863d;
     transform: translateY(-2px);
     box-shadow: 0px 7px 14px rgba(0, 0, 0, 0.3), 0px 2px 4px rgba(255, 255, 255, 0.2) inset;
 }
@@ -120,17 +120,17 @@
 }
 
 .dragDrop:hover {
-    border-color: #0056b3;
+    border-color: #45a049;
     background-color: rgba(255, 255, 255, 0.9);
 }
 
 .dragging {
-    border-color: #0056b3;
+    border-color: #45a049;
     background-color: rgba(0, 86, 179, 0.1);
 }
 
 .uploadIcon {
-    color: #0056b3;
+    color: #45a049;
     margin-bottom: 10px;
 }
 
@@ -224,7 +224,7 @@
     flex-wrap: wrap;
     align-items: center;
     padding: 5px;
-    border: 1px solid #ccc;
+   
     border-radius: 4px;
   }
   
@@ -235,13 +235,14 @@
   }
   
   .tag {
-    background-color: #e0e0e0;
+    background-color: #45a049;
     border-radius: 3px;
     padding: 2px 5px;
     margin-right: 5px;
     margin-bottom: 5px;
     display: flex;
     align-items: center;
+    color: white;
   }
   
   .tag button {
@@ -279,12 +280,19 @@
   
   .removeButton {
     position: absolute;
+    height: 20px;
+    width: 20px;
     top: 5px;
     right: 5px;
     background-color: rgba(0, 0, 0, 0.5);
     border: none;
     border-radius: 50%;
-    color: white;
+    color: rgb(255, 0, 0);
     cursor: pointer;
-    padding: 5px;
+    
+  }
+  .removeButton span{
+    position: absolute;
+    top: -25%;
+    left: 10%;
   }

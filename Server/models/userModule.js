@@ -22,7 +22,7 @@ const userSchema = mongoose.Schema(
       required: [true, "Please enter your Password"],
     },
     profilePhoto: { type: String },
-    
+
     role: {
       type: [String],
       default: ["user"],
@@ -30,13 +30,13 @@ const userSchema = mongoose.Schema(
     notifications: [
       {
         message: String,
-        timestamp: {
-          type: Date,
-          default: Date.now,
-        },
         read: {
           type: Boolean,
           default: false,
+        },
+        timestamp: {
+          type: Date,
+          default: Date.now,
         },
       },
     ],
@@ -96,7 +96,7 @@ const expertSchema = mongoose.Schema(
     expertise: {
       //  array
       type: [String],
-      required: [true],
+      required: [true, "Please enter the field of expertese"],
     },
     resume: {
       type: String,

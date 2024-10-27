@@ -7,95 +7,105 @@ const session = require("express-session");
 // @route http://localhost:8080/user/doubt
 // @access private
 const userdoubt = asyncHandler(async (req, res) => {
-  // console.log("[C] Error Check :")
-  const {
-    doubt,
-    doubtDescription,
-    field, // which field it is related to
-    minMoney,
-    maxMoney,
-    duration,
-  } = req.body;
+  let { doubt, doubtDescription, field, minMoney, maxMoney, duration } =
+    req.body;
 
-  if (!doubt) console.log("doubt not found");
-  if (!doubtDescription) console.log("doubtdisc not found");
-  if (!field) console.log("field not found");
-  if (!minMoney) console.log("minMoney not found");
-  if (!maxMoney) console.log("maxMoney not found");
-  if (!duration) console.log("duration not found");
-
-  let doubtPictures;
-  try {
+  // Handle optional doubt pictures
+  let doubtPictures = [];
+  if (req.files && req.files["doubtPictures"]) {
     doubtPictures = req.files["doubtPictures"].map((file) => file.filename);
-  } catch (err) {
-    doubtPictures = "";
   }
 
+  // Ensure required fields are present
   if (!doubt || !doubtDescription || !field) {
     res.status(400);
-    throw new Error("[E] Please fill the every essentials in the form");
-  } else {
-    try {
-      const decodedInfo = req.user.decoded;
-      username = decodedInfo.user.username;
+    throw new Error("[E] Please fill in all required fields in the form");
+  }
 
-      const store = await doubtSchema.create({
-        username,
-        doubt,
-        doubtDiscription: doubtDescription,
-        field: Array.isArray(field) ? field : [field],
-        doubtPictures,
-        money: {
-          min: minMoney,
-          max: maxMoney,
-        },
-        time: {
-          duration,
-        },
-        status: "Doubt submitted",
-      });
-      const user = await userschema.findOne({ username });
-      const doubtSource = await doubtSchema.findOne({ username: username });
-      const doubtId = doubtSource._id;
-      user.meetings.push({ role: "learner", doubtId }); // I was fixing this
+  try {
+    // Decode user info
+    const { username } = req.user.decoded.user;
+    
 
-      const usernameCopy = username;
+    // Ensure 'field' is an array and standardize the field names
+    const fieldArray = Array.isArray(field) ? field : JSON.parse(field);
+    console.log("Field array is ....")
+    console.log(fieldArray)
+    const fields = fieldArray.map((f) => f.toLowerCase());
+    console.log("Field array is ....")
+    console.log(fields);
 
-      const skilledExperts = await expertschema.find({
-        expertise: { $in: field },
-      });
-      
-      skilledExpertsUsername = skilledExperts.map((user) => user.username);
-      console.log("[T] Experts are ::", skilledExpertsUsername);
+    console.log("Doubt pictures")
+    console.log(doubtPictures)
 
-      console.log("[T] The data is ", doubtId);
+    console.log("Doub t is ")
+    console.log(doubt)
+    console.log("Doub desc t is ")
+    console.log(doubtDescription)
+    doubtDiscription ="dsdsdsdsdsd"
 
-      for (const _expert of skilledExpertsUsername) {
-        await expertschema.updateOne(
-          { username: _expert },
-          {
-            $push: {
-              notifications: {
-                message: `From ${usernameCopy} with doubt id: ${doubtId} has a doubt for you :: ${doubt} with duration ${duration}`,
-              },
-            },
-          }
-        );
-      }
-      console.log("[T] Notification send successfully ..");
-      // if this works, I have to find a way to send doubt to frontend by checking the unreaded doubts in his schema
-      // also send notification every time a new notification appears in his notificationSection in schema
+    // Create a new doubt entry
+    const store = await doubtSchema.create({
+      username,
+      doubt,
+      doubtDiscription, // Fixed typo from 'doubtDiscription' to 'doubtDescription'
+      field: fields,
+      doubtPictures,
+      money: { min: minMoney, max: maxMoney },
+      time: { duration },
+      status: "Doubt submitted",
+    });
 
-      console.log("[T] Doubt data submitted successfully !!");
-      res.status(201).json({
-        message: "Field submitted in database successfully: ",
-        data: doubtId,
-      });
-    } catch (error) {
-      res.status(500).json({
-        message: `[E] There was error in formController Doubt submission :${error.message}`,
-      });
+
+    console.log("Store is ",store)
+
+    // Update user's meetings with new doubt reference
+    const user = await userschema.findOne({ username });
+    user.meetings.push({ role: "learner", doubtId: store._id });
+    await user.save();
+    console.log("User is ",user)
+
+    // Find experts with matching expertise fields
+    const skilledExperts = await expertschema.find({
+      expertise: { $in: fields },
+    });
+    console.log("Skilled Experts are ",skilledExperts)
+
+    // Prepare notification message for experts
+    const notificationMessage = JSON.stringify({
+      message: "There is a doubt for you!",
+      user: username,
+      doubtId: store._id,
+      doubt,
+      doubtDescription,
+      doubtPictures,
+      duration,
+      read: false,
+    });
+    const notification = {
+      message: notificationMessage,
+      read:false
     }
+    // Send notifications to matching experts
+    await Promise.all(
+      skilledExperts.map((expert) =>
+        expertschema.updateOne(
+          { username: expert.username },
+          { $push: { notifications: notification } }
+        )
+      )
+    );
+
+    // Respond with success
+    res.status(201).json({
+      message: "Doubt submitted successfully",
+      // data: store._id,
+    });
+  } catch (error) {
+    console.log("error is ", error);
+    res.status(500).json({
+      message: `[E] There was an error in submitting the doubt: ${error.message}`,
+    });
   }
 });
 

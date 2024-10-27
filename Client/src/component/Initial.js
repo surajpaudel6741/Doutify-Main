@@ -1,11 +1,10 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useRef } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import styles from "./Initial.module.css";
 import TimeMoneyDurationModal from "./TimeMoneyDurationModal";
 import { FaCloudUploadAlt, FaTimes } from "react-icons/fa";
-import { verify } from "../utils/tokenVerify";
-import { useLocation, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import ExpertProfileModal from "./ExpertProfileModal";
 import {  useSwitchExpertContext } from "../context/switchExpertContext";
@@ -26,7 +25,6 @@ const Initial = () => {
   const quillRef = useRef();
   const fileInputRef = useRef();
   const navigate = useNavigate();
-  const location = useLocation();
   const {state,setState} = useSwitchExpertContext()
 
   console.log("Redirected to the initial")
@@ -165,7 +163,7 @@ const Initial = () => {
         body: formData,
       });
 
-      const data = await response.json();
+     
       if (response.ok) {
         alert("Doubt submitted successfully!");
         setShowModal(false)
@@ -181,10 +179,12 @@ const Initial = () => {
         quillRef.current.getEditor().setContents([]);
       }
       } else {
+        console.log("Error occured")
         // console.error("Error submitting doubt:", data.message);
         alert("An error occurred while submitting your doubt.");
       }
     } catch (error) {
+      console.log(error)
       // console.error("Error submitting doubt:", error);
       alert("An error occurred while submitting your doubt.");
     }
@@ -280,7 +280,7 @@ const Initial = () => {
               className={styles.removeButton}
               onClick={() => handleRemoveImage(index)}
             >
-              <FaTimes />
+              <span><FaTimes /></span>
             </button>
           </div>
         ))}

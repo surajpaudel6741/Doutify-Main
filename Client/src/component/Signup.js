@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import styles from './Signup.module.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import ProfilePictureUpload from './ProfilePictureUpload';
 const Signup = () => {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [profilePhoto, setProfilePhoto] = useState(null);
   const [loading, setLoading] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState(true);
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ const Signup = () => {
         }
       }
     };
-
+    
     const debounceTimer = setTimeout(() => {
       checkUsername();
     }, 500);
@@ -82,10 +83,18 @@ const Signup = () => {
 
     setLoading(true);
     try {
+      const formData = new FormData();
+      formData.append('fullname', name);
+      formData.append('username', username);
+      formData.append('email', email);
+      formData.append('password', password);
+      if (profilePhoto) {
+        formData.append('profilePhoto', profilePhoto);
+      }
+
       const response = await fetch('http://localhost:8080/signup', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fullname: name, username, email, password }),
+        body: formData, // Changed to formData to support file upload
       });
 
       let data;
@@ -116,6 +125,7 @@ const Signup = () => {
     <div className={styles.container}>
       <ToastContainer />
       <h2>Sign Up</h2>
+      <ProfilePictureUpload onImageUpdate={setProfilePhoto} />
       <form onSubmit={handleSignup}>
         <input
           type="text"
