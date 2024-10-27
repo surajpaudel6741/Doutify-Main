@@ -13,6 +13,7 @@ const Expert = () => {
   const [doubts, setDoubts] = useState([]);
   const [bids, setBids] = useState({});
   const [modalOpen, setModalOpen] = useState(false);
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false); // New confirmation modal state
   const [activeDoubt, setActiveDoubt] = useState(null);
   const [bidAmount, setBidAmount] = useState(0);
   const [selectedDateTime, setSelectedDateTime] = useState(new Date()); // State for selected date and time
@@ -93,21 +94,32 @@ const Expert = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${Cookies.get("token")}`,
           },
-          body: JSON.stringify({ doubtId, finalPrice:12, finalTime:selectedDateTime }), // Send selected dateTime with bid
+          body: JSON.stringify({ doubtId, finalPrice: bidAmount, finalTime: selectedDateTime }), // Send selected dateTime with bid
         }
       );
 
-      const data = await response.json();
-      alert(`Bid submitted successfully: ${bidAmount} USD`);
-
-      setBids((prevBids) => ({ ...prevBids, [activeDoubt]: bidAmount }));
-      setDoubts((prevDoubts) =>
-        prevDoubts.filter((_, index) => index !== activeDoubt)
-      );
-      handleModalClose();
+      if (response.ok) {
+        // Update bids and close the bid modal
+        setBids((prevBids) => ({ ...prevBids, [activeDoubt]: bidAmount }));
+        setDoubts((prevDoubts) =>
+          prevDoubts.map((doubt, index) =>
+            index === activeDoubt ? { ...doubt, bidPlaced: true } : doubt
+          )
+        );
+        handleModalClose();
+        
+        // Open confirmation modal
+        setConfirmationModalOpen(true);
+      } else {
+        console.error("Failed to submit bid:", response);
+      }
     } catch (error) {
       console.error("Error submitting bid:", error);
     }
+  };
+
+  const handleConfirmationModalClose = () => {
+    setConfirmationModalOpen(false);
   };
 
   return (
@@ -167,12 +179,18 @@ const Expert = () => {
                   {doubt.minMoney} USD - {doubt.maxMoney} USD
                 </span>
               </div>
-              <button
-                className={styles.bidButton}
-                onClick={() => handleBidClick(index)}
-              >
-                Place Bid
-              </button>
+              {doubt.bidPlaced ? (
+                <button className={styles.bidPlacedButton} disabled>
+                  Bid Placed
+                </button>
+              ) : (
+                <button
+                  className={styles.bidButton}
+                  onClick={() => handleBidClick(index)}
+                >
+                  Place Bid
+                </button>
+              )}
               {bids[index] && (
                 <p className={styles.bidText}>Your Bid: {bids[index]} USD</p>
               )}
@@ -211,7 +229,7 @@ const Expert = () => {
               />
             </div>
             <div className={styles.modalActions}>
-              <button className={styles.submitButton} onClick={()=>{submitBid()}}>
+              <button className={styles.submitButton} onClick={submitBid}>
                 Submit Bid
               </button>
               <button
@@ -221,6 +239,21 @@ const Expert = () => {
                 Cancel
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {confirmationModalOpen && (
+        <div className={styles.modalOverlay}>
+          <div className={`${styles.modalContent} ${styles.confirmationModal}`}>
+            <h3>Bid Placed Successfully!</h3>
+            <p>{`Doubt: ${doubts[activeDoubt]?.title}`}</p>
+            <p>{`Your Bid: ${bidAmount} USD`}</p>
+            <p>Wait for the user’s response.</p>
+            <button className={styles.okayButton} onClick={handleConfirmationModalClose}>
+              Okay
+            </button>
           </div>
         </div>
       )}
