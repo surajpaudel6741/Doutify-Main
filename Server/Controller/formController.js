@@ -230,11 +230,7 @@ const finalTimenPrice = asyncHandler(async (req, res) => {
   try {
     // body: JSON.stringify({ doubtId, bidAmount, selectedDateTime })
 
-    const {
-      finalTime,
-      finalPrice,
-      doubtId,
-    } = req.body; // username -> The one had a doubt
+    const { finalTime, finalPrice, doubtId } = req.body; // username -> The one had a doubt
     // changed my mind and doing via body, we can inserting using post in js easily ...
     if (!finalTime || !finalPrice) {
       return res.status(400).json({
@@ -255,12 +251,14 @@ const finalTimenPrice = asyncHandler(async (req, res) => {
 
     const userWithDoubt = await userschema.findOne({ username: username });
     console.log(userWithDoubt);
+    console.log(doubt.doubt);
 
     let bidnotification = JSON.stringify({
       expertname,
       doubtId,
       finalTime,
-      finalPrice
+      finalPrice,
+      doubtTitle: doubt.doubt,
     });
 
     userWithDoubt.notifications.push({

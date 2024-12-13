@@ -18,6 +18,7 @@ import ExpertProfileModal from "./component/ExpertProfileModal";
 import SwitchExpertContext from "./context/switchExpertContext";
 import Cookies from "js-cookie";
 import DoubtList from "./component/bided/DoubtList"
+import VideoRoom from "./component/VideoRoom";
 function App() {
   console.log("App is rendered")
   const location = useLocation();
@@ -82,6 +83,7 @@ function App() {
                   )
                 }
               />
+              <Route path="/video-room/:roomId" element={<VideoRoom />} />
               <Route
                 path="/user/doubtlist"
                 element={

@@ -222,8 +222,9 @@
 }
 
 .slider {
-  width: 100%;
-  height: 10px;
+  width: 100%; /* Full width */
+  height: 10px; /* Height of the slider */
+  padding-bottom: 10%;
 }
 
 .thumb {
@@ -235,7 +236,10 @@
 }
 
 .track {
-  background: lightgray;
+  background: lightgray; /* Customize the track color */
+  border-radius: 3px;
+  margin-top: 5px;
+  height: 10px;
 }
 
 /* Confirmation Modal Styling */

@@ -78,49 +78,52 @@ const Expert = () => {
   };
 
   const submitBid = async () => {
-    if (bidAmount <= 0) {
-      alert("Please enter a valid bid amount.");
-      return;
-    }
+  if (bidAmount <= 0) {
+    alert("Please enter a valid bid amount.");
+    return;
+  }
 
-    const doubtId = doubts[activeDoubt]?._id;
+  const doubtId = doubts[activeDoubt]?._id;
 
-    try {
-      const response = await fetch(
-        "http://localhost:8080/user/notification/finalTimenPrice",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${Cookies.get("token")}`,
-          },
-          body: JSON.stringify({ doubtId, finalPrice: bidAmount, finalTime: selectedDateTime }), // Send selected dateTime with bid
-        }
-      );
-
-      if (response.ok) {
-        // Update bids and close the bid modal
-        setBids((prevBids) => ({ ...prevBids, [activeDoubt]: bidAmount }));
-        setDoubts((prevDoubts) =>
-          prevDoubts.map((doubt, index) =>
-            index === activeDoubt ? { ...doubt, bidPlaced: true } : doubt
-          )
-        );
-        handleModalClose();
-        
-        // Open confirmation modal
-        setConfirmationModalOpen(true);
-      } else {
-        console.error("Failed to submit bid:", response);
+  try {
+    const response = await fetch(
+      "http://localhost:8080/user/notification/finalTimenPrice",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+        body: JSON.stringify({ doubtId, finalPrice: bidAmount, finalTime: selectedDateTime }), // Send selected dateTime with bid
       }
-    } catch (error) {
-      console.error("Error submitting bid:", error);
+    );
+
+    if (response.ok) {
+      // Update bids using the _id for better identification
+      setBids((prevBids) => ({ ...prevBids, [doubtId]: bidAmount }));
+      setDoubts((prevDoubts) =>
+        prevDoubts.map((doubt) =>
+          doubt._id === doubtId ? { ...doubt, bidPlaced: true } : doubt
+        )
+      );
+      handleModalClose();
+      
+      // Open confirmation modal
+      setConfirmationModalOpen(true);
+    } else {
+      console.error("Failed to submit bid:", response);
     }
-  };
+  } catch (error) {
+    console.error("Error submitting bid:", error);
+  }
+};
+
 
   const handleConfirmationModalClose = () => {
     setConfirmationModalOpen(false);
   };
+
+  
 
   return (
     <div className={styles.doubtContainer}>
@@ -249,6 +252,7 @@ const Expert = () => {
           <div className={`${styles.modalContent} ${styles.confirmationModal}`}>
             <h3>Bid Placed Successfully!</h3>
             <p>{`Doubt: ${doubts[activeDoubt]?.title}`}</p>
+           
             <p>{`Your Bid: ${bidAmount} USD`}</p>
             <p>Wait for the user’s response.</p>
             <button className={styles.okayButton} onClick={handleConfirmationModalClose}>
